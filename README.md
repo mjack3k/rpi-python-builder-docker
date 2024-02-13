@@ -1,6 +1,11 @@
 # rpi-python-builder-docker
 Docker image for building python for raspberry pi
 
+
+## Current status
+It is working, but is not automated properly yet
+
+
 ## What is this?
 In short? A **docker image** to build python for RPI. 
 
