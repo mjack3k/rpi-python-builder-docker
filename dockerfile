@@ -37,3 +37,5 @@ RUN mkdir /app/out
 # Copy scripts
 COPY ./scripts /app
 
+ENTRYPOINT /app/all_steps.sh
+

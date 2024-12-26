@@ -135,7 +135,7 @@ class PythonBuilderApp(tk.Tk):
         self.run_long_process("Building docker image", command=cmd)
     
     def on_build_click(self):
-        cmd = ['bash', f'{os.path.join(ROOT_DIR, "build_python.sh")}']
+        cmd = ['bash', f'{os.path.join(ROOT_DIR, "run_docker.sh")}']
         self.run_long_process("Building python", command=cmd)
 
     def on_install_click(self):
@@ -148,6 +148,11 @@ class PythonBuilderApp(tk.Tk):
         self.after(5000, self.check_everything)
     
     def check_docker(self):
+        cmd = ['docker', '-v']
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if result.stdout:
+            if 'Docker version' in result.stdout.decode('utf-8'):
+                return True
         return False
     
     def check_image(self):
