@@ -1,7 +1,12 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import simpledialog
 import subprocess
 import os
+import paramiko
+import shutil
+
+PYTHON_VER = "3.13.1"
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -21,7 +26,7 @@ class StatusCheck(tk.Frame):
         super().__init__(parent)
         self.text_label = tk.Label(self, text=text, anchor=tk.W)
         self.text_label.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5, pady=5, anchor=tk.W)
-        self.status_label = tk.Label(self, text="❌", anchor=tk.E)
+        self.status_label = tk.Label(self, text="✗", anchor=tk.E)
         self.status_label.pack(side=tk.RIGHT, fill=tk.X, expand=True, padx=5, pady=5)
     
     def set(self, status):
@@ -163,6 +168,8 @@ class PythonBuilderApp(tk.Tk):
         return False
 
     def check_python(self):
+        if os.path.exists(os.path.join(ROOT_DIR, 'out', f'PYTHON_{PYTHON_VER}')):
+            return True
         return False
     
     def run_long_process(self, message, command):
@@ -177,6 +184,45 @@ class PythonBuilderApp(tk.Tk):
             modal.update_status(f"Error: {str(e)}")
         finally:
             self.after(2000, modal.stop)
+
+    def compress_and_copy(self):
+        source_dir = os.path.join(ROOT_DIR, 'out', f'PYTHON_{PYTHON_VER}')
+        compressed_file = os.path.join(ROOT_DIR, 'out', f'PYTHON_{PYTHON_VER}.tar.gz')
+
+        # Compress the directory
+        shutil.make_archive(compressed_file.replace('.tar.gz', ''), 'gztar', source_dir)
+
+        # Read username and host from entry fields
+        username = self.username_field.get_value()
+        host = self.host_field.get_value()
+
+        # Prompt for the password
+        password = simpledialog.askstring("Password", "Enter your password:", show='*')
+
+
+        # Define the remote path
+        remote_path = f'/home/{username}/PYTHON_{PYTHON_VER}.tar.gz'
+
+        # Copy the compressed file via SCP using Paramiko
+        try:
+            # Create an SSH client
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            
+            # Connect to the host
+            ssh.connect(host, username=username, password=password)
+            password = ''
+            # Use SCP to copy the file
+            sftp = ssh.open_sftp()
+            sftp.put(compressed_file, remote_path)
+            sftp.close()
+            
+            # Close the SSH connection
+            ssh.close()
+            
+            print(f"File {compressed_file} successfully copied to {remote_path}")
+        except Exception as e:
+            print(f"Failed to copy file: {str(e)}")
 
 if __name__ == "__main__":
     app = PythonBuilderApp()
