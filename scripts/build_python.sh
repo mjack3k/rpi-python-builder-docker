@@ -1,5 +1,5 @@
 # Set python version
-export PYTHON_VERSION=3.12.2
+export PYTHON_VERSION=3.13.1
 export PYTHON_MAJOR=3
 
 # Set install dir
