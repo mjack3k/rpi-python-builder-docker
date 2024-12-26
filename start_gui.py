@@ -144,7 +144,7 @@ class PythonBuilderApp(tk.Tk):
         self.run_long_process("Building python", command=cmd)
 
     def on_install_click(self):
-        self.label.config(text="Button Clicked!")
+        self.compress_and_copy()
 
     def check_everything(self):
         self.docker_check.set(self.check_docker())
