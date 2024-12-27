@@ -3,7 +3,7 @@ Docker image for building python for raspberry pi
 <br>
 
 ## Current status
-It is working, but is not automated properly yet
+You can use the individual scripts to build python manually, or alternatively use the provided GUI.
 <br>
 
 ## What is this?
@@ -33,6 +33,24 @@ This assumes that you have docker installed and set up on your machine.
 This also kinda assumes that you use linux, but I am pretty sure that it can be adapter to run in windows
 - the building steps are linux-specific, once you run the container it doesn't matter what system it runs on
 
+### Using the provided GUI
+1. Prepare system
+   - install docker, check if hello world image runs
+2. Download/clone this repository
+3. Install python3 and modules (on windows - inside WSL)
+   `sudo apt install python3-tk python3-paramiko`
+4. Run the GUI (on windows - from WSL)
+   `python3 start_gui.py`
+5. Enter your Raspberry Pi credentials
+   Username, host/IP address, port
+6. Use the buttons on the right to build and install
+   - start with building docker image
+   - then build python - this step takes a long time
+   - install - this will pack the Python and copy over SSH to your RPI
+   
+   Status widget below shows you, if the docker image is available, and if the produced python directory exists. 
+
+### Manual build
 1. Prepare system
    - install docker, check if hello world image runs
 2. Download/clone this repository
