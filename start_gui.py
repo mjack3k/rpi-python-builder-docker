@@ -21,6 +21,10 @@ class FormField(tk.Frame):
     def get_value(self):
         return self.entry.get()
 
+    def set_value(self, value):
+        self.entry.delete(0, tk.END)
+        self.entry.insert(0, value)
+
 class StatusCheck(tk.Frame):
     def __init__(self, parent, text):
         super().__init__(parent)
@@ -103,6 +107,10 @@ class PythonBuilderApp(tk.Tk):
         
         self.host_field = FormField(self.target_rpi_frame, "Host:")
         self.host_field.pack(anchor='w', fill=tk.X, expand=True)
+
+        self.port_field = FormField(self.target_rpi_frame, "Port:")
+        self.port_field.pack(anchor=tk.W, fill=tk.X, expand=True)
+        self.port_field.set_value('22')
 
         # Action
         self.action_frame = tk.Frame(self.work_frame)
@@ -195,6 +203,7 @@ class PythonBuilderApp(tk.Tk):
         # Read username and host from entry fields
         username = self.username_field.get_value()
         host = self.host_field.get_value()
+        port = self.port_field.get_value()
 
         # Prompt for the password
         password = simpledialog.askstring("Password", "Enter your password:", show='*')
@@ -210,7 +219,7 @@ class PythonBuilderApp(tk.Tk):
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             
             # Connect to the host
-            ssh.connect(host, username=username, password=password)
+            ssh.connect(host, username=username, password=password, port=port)
             password = ''
             # Use SCP to copy the file
             sftp = ssh.open_sftp()
